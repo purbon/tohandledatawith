@@ -16,10 +16,10 @@ public class BPlusTreeTest {
 	@Before
 	public void setUp() throws Exception {
 		t = new BPlusTree(4);
-		t.insert(3,  "d1");
-		t.insert(5,  "d2");
-		t.insert(10, "d3");
-		t.insert(7,  "d4");
+		t.insert(1,  "d1");
+		t.insert(4,  "d2");
+		t.insert(7,  "d3");
+		t.insert(10, "d4");
 	}
 
 	@After
@@ -42,7 +42,21 @@ public class BPlusTreeTest {
 		assertEquals(true, n.isLeaf());
 		assertEquals((Integer)7, n.keys().get(0));
 		assertEquals((Integer)10, n.keys().get(1));
-
+	}
+	
+	@Test
+	public void testInsertSecondBucket() {
+		t.insert(17, "d5");
+		t.insert(21, "d6");
+		Node root = t.getRootNode();
+		assertEquals(2, root.size());
 	}
 
+	@Test
+	public void testSecondBucketSearch() {
+		t.insert(17, "d5");
+		t.insert(21, "d6");
+		Node node = t.search(10);
+		assertEquals((Integer)10, node.keys().get(1));
+	}
 }

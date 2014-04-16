@@ -45,6 +45,8 @@ public class BPlusTree {
 	
 	private void splitAndRelocate(Node n, int key, Object value) {
 		n.add(key, value);
+		if (n.size() < n.capacity())
+			return;
 		int  s = (int)Math.floor(n.size()/2);
 		
 		Node r = new Node(n.capacity());
@@ -56,11 +58,19 @@ public class BPlusTree {
 			n.k.remove(i);
 			n.p.remove(i);
 		}
-		
-		root = new Node(n.capacity());
-		root.leaf = false;
-		root.add(key, n);
-		root.p.add(r);
+		if (n.parent == null) { // create a new root node.
+			
+			root = new Node(n.capacity());
+			root.leaf = false;
+			root.add(r.k.get(0), n);
+			root.p.add(r);
+			n.parent = root;
+			r.parent = root;
+			return;
+		}
+		r.parent = n.parent;
+		splitAndRelocate(r.parent, r.k.get(0), r);
+	
 		
 	}
 
