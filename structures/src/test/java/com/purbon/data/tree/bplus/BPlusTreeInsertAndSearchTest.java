@@ -1,4 +1,4 @@
-package structures;
+package com.purbon.data.tree.bplus;
 
 import static org.junit.Assert.*;
 
@@ -17,8 +17,8 @@ public class BPlusTreeInsertAndSearchTest {
 	public void setUp() throws Exception {
 		t = new BPlusTree(4);
 		t.insert(1,  "d1");
-		t.insert(4,  "d2");
 		t.insert(7,  "d3");
+		t.insert(4,  "d2");
 		t.insert(10, "d4");
 	}
 
@@ -28,20 +28,18 @@ public class BPlusTreeInsertAndSearchTest {
 
 	@Test
 	public void testInsertOneBucket() {
-		assertEquals(1, t.getRootNode().size());
+		assertEquals(4, t.getRootNode().size());
 	}
 	
 	@Test
 	public void testRoot() {
-		assertEquals(false, t.getRootNode().isLeaf());
+		assertEquals(true, t.getRootNode().isLeaf());
 	}
 
 	@Test
 	public void testSearch() {
 		Node n  = t.search(7);
-		assertEquals(true, n.isLeaf());
-		assertEquals((Integer)7,  n.keys().get(0));
-		assertEquals((Integer)10, n.keys().get(1));
+		assertEquals((Integer)7,  n.keys().get(2));
 	}
 	
 	@Test
@@ -49,7 +47,7 @@ public class BPlusTreeInsertAndSearchTest {
 		t.insert(17, "d5");
 		t.insert(21, "d6");
 		Node root = t.getRootNode();
-		assertEquals(2, root.size());
+		assertEquals(1, root.size());
 	}
 
 	@Test
@@ -67,8 +65,8 @@ public class BPlusTreeInsertAndSearchTest {
 		t.insert(31, "d7");
 		t.insert(25, "d8");
 		Node root = t.getRootNode();
-		assertEquals(3, root.size());
-		int[]  pk   = new int[]{7,17,25};
+		assertEquals(2, root.size());
+		int[]  pk   = new int[]{7,17};
 		for(int i=0; i < pk.length; i++) {
 			assertEquals((Integer)pk[i], root.keys().get(i));
 		}
@@ -82,7 +80,7 @@ public class BPlusTreeInsertAndSearchTest {
 		t.insert(25, "d8");
 		t.insert(19, "d9");
 		t.insert(20, "d10");
-		assertEquals((Integer)20, t.getRootNode().keys().get(0));
+		assertEquals((Integer)7, t.getRootNode().keys().get(0));
 	}
 
 	@Test

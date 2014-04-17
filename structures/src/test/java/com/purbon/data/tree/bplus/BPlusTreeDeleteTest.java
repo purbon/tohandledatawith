@@ -1,4 +1,4 @@
-package structures;
+package com.purbon.data.tree.bplus;
 
 import static org.junit.Assert.*;
 
@@ -17,6 +17,7 @@ public class BPlusTreeDeleteTest {
 	public void setUp() throws Exception {
 		t = new BPlusTree(4);
 		t.setRoot(buildTree());
+		t.setDeep(2);
 	}
 
 	@After

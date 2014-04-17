@@ -8,13 +8,14 @@ package com.purbon.data.tree.bplus;
 public class BPlusTree {
 
 	private Node root;
-	
+	private int  deep;
 	/**
 	 * Default constructor
 	 * @param n The internal bucket size.
 	 */
 	public BPlusTree(int n) {
 		this.root = new Node(n);
+		this.deep = 1;
 	}
 	
 	/**
@@ -88,23 +89,27 @@ public class BPlusTree {
 		Node r = split(n, s);
 		if (n.parent == null) {
 			root = new Node(n.capacity(), false);
-			// move up the remaining key.			
-			key = r.k.remove(0);
-			root.k.add(key);
-			n.p.add(r.p.get(0));
-			r.p.remove(0);
-			
+			// move up the remaining key.		
+			root.k.add(r.k.get(0));
+			if (deep > 1) {
+				r.k.remove(0);
+				n.p.add(r.p.get(0));
+				r.p.remove(0);
+			}
 			root.p.add(n);
 			root.p.add(r);
 			r.parent = root;
 			n.parent = root;
+			deep++;
 			return;
 		} else {
 			splitAndRelocate(n.parent, r.k.get(0), r);
 		}	
 	}
 
-	
+	protected void setDeep(int deep) {
+		this.deep = deep;
+	}
 	private Node split(Node n, int s) {
 		Node r = new Node(n.capacity());
 		for(int i=s; i < n.k.size(); i++) {
