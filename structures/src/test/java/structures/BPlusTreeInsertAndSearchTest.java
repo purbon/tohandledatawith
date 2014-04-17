@@ -9,7 +9,7 @@ import org.junit.Test;
 import com.purbon.data.tree.bplus.BPlusTree;
 import com.purbon.data.tree.bplus.Node;
 
-public class BPlusTreeTest {
+public class BPlusTreeInsertAndSearchTest {
 
 	BPlusTree t;
 	
@@ -25,7 +25,6 @@ public class BPlusTreeTest {
 	@After
 	public void tearDown() throws Exception {
 	}
-	
 
 	@Test
 	public void testInsertOneBucket() {

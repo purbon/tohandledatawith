@@ -1,7 +1,7 @@
 package com.purbon.data.tree.bplus;
 
 /**
- * BPlusTree dummy implementation.
+ * BPlusTree implementation, might not be production ready, having a focus on educational purpouses.
  * @author purbon
  *
  */
@@ -9,14 +9,19 @@ public class BPlusTree {
 
 	private Node root;
 	
+	/**
+	 * Default constructor
+	 * @param n The internal bucket size.
+	 */
 	public BPlusTree(int n) {
 		this.root = new Node(n);
 	}
 	
-	public Node getRootNode() {
-		return root;
-	}
-	
+	/**
+	 * Search a key into the tree
+	 * @param key The key to be searched
+	 * @return the result of this operation.
+	 */
 	public Node search(int key) {
 		return search(key, root);
 	}
@@ -24,6 +29,7 @@ public class BPlusTree {
 	private Node search(int k, Node n) {
 		if (n.isLeaf())
 			return n;
+		
 		Node m = null;
 		for(int i=0; i < n.size() && m == null; i++) {
 			if (k < n.k.get(i)) {
@@ -31,32 +37,65 @@ public class BPlusTree {
 			}	
 		}
 		if (m == null)
-			m = (Node)n.p.lastElement();
+			m = (Node)n.p.get(n.p.size()-1);
 		
 		return search(k, m);
 	}
 	
+	/**
+	 * Let you insert a new value into the tree
+	 * @param key The new key
+	 * @param value The new value
+	 */
 	public void insert(int key, Object value) {
 		Node n = search(key);
-		if (n.k.size() < (n.k.capacity()-1)) {
+		if (n.k.size() < (n.capacity()-1)) {
 			n.add(key, value);
 			return;
 		}
 		splitAndRelocate(n, key, value);
 	}
 		
+	/**
+	 * Remove a key from the tree
+	 * @param key
+	 */
+	public void delete(int key) {
+		Node n = search(key);
+		n.remove(key);
+		if (n.size() < n.capacity()/2) { // data should be redistributed
+			
+		}
+	}
+
+	/**
+	 * Get's the root tree node.
+	 * @return the root node.
+	 */
+	public Node getRootNode() {
+		return root;
+	}
+	
+	public void setRoot(Node node) {
+		this.root = node;
+	}
+
 	private void splitAndRelocate(Node n, int key, Object value) {
 		n.add(key, value);
-		if (n.size() < n.capacity())
+		if (n.size() <= n.capacity())
 			return;
 		int  s = (int)Math.ceil(n.capacity()/2.0);
 		Node r = split(n, s);
 		if (n.parent == null) {
-			root = new Node(n.capacity());
-			root.leaf = false;
-			root.k.add(r.k.get(0));
-			root.p.insertElementAt(n, 0);
-			root.p.insertElementAt(r, 1);
+			root = new Node(n.capacity(), false);
+			// move up the remaining key.			
+			key = r.k.remove(0);
+			root.k.add(key);
+			n.p.add(r.p.get(0));
+			r.p.remove(0);
+			
+			root.p.add(n);
+			root.p.add(r);
 			r.parent = root;
 			n.parent = root;
 			return;
@@ -81,30 +120,8 @@ public class BPlusTree {
 			n.p.remove(i);
 		}
 		r.parent = n.parent;
+		n.sibling = r;
 		return r;
-	}
-
-	public void delete(int key) {
-		
-	}
-
-	@Override
-	public String toString() {
-		return toString(0, root);
-	}
-	
-	private String toString(int i, Node node) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("("+i+")");
-		sb.append(node);
-		sb.append("[");
-		for(Object p : node.pointers()) {
-			if (p instanceof Node) {
-				sb.append(toString(i+1,(Node)p));
-			}
-		}
-		sb.append("]\n");
-		return sb.toString();
 	}
 }
 

@@ -1,39 +1,47 @@
 package com.purbon.data.tree.bplus;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Node {
 
-	Vector<Integer> k;
-	Vector<Object> p;
-	Node parent;
+	List<Integer> k;
+	List<Object> p;
 	
+	Node parent;
+	Node sibling;
+	
+	int n;
 	boolean leaf;
 	
-	Node(int n) {
-		k = new Vector<Integer>(n);
-		p = new Vector<Object>(n);
-		leaf = true;
-		parent = null;
+	public Node(int n) {
+		this(n, true);
 	}
 	
+	public Node(int n, boolean leaf) {
+		k = new ArrayList<Integer>();
+		p = new ArrayList<Object>();
+		this.leaf = leaf;
+		parent = null;
+		this.n = n;
+	}
 	public boolean isLeaf() {
 		return leaf;
 	}
 	
 	public int capacity() {
-		return k.capacity();
+		return n;
 	}
 	
 	public int size() {
 		return k.size();
 	}
 
-	public Vector<Integer> keys() {
+	public List<Integer> keys() {
 		return k;
 	}
 	
-	public Vector<Object> pointers() {
+	public List<Object> pointers() {
 		return p;
 	}
 	
@@ -44,17 +52,36 @@ public class Node {
 				pos = i;
 			}
 		}
-		if (k.size() < k.capacity() && pos == -1)
-			pos = k.size();
-		k.insertElementAt(key, pos);
-		if (!isLeaf() && p.size() > pos) {
-			Node fn = ((Node)p.get(pos));
-			if (fn.k.size() > 0 && key > fn.k.get(0))
-				pos++;
+		if (pos == -1) {
+			k.add(key);
+			p.add(v);
+			pos = p.size()-1;
+		} else {
+			k.add(pos, key);
+			p.add(pos+1, v);
 		}
-		p.insertElementAt(v, pos);
+		
 		return pos;
+
+		
 	}
+
+	public boolean isFull() {
+		return p.size() == n;
+	}
+
+	public void remove(int key) {
+		int pos = -1;
+		for(int i=0; i < k.size() && pos == -1; i++) {
+			if (k.get(i).equals(key))
+				pos = i;
+		}
+		if (pos > -1) {
+			k.remove(pos);
+			p.remove(pos);
+		}
+	}
+
 
 	@Override
 	public String toString() {
@@ -65,12 +92,12 @@ public class Node {
 				sb.append(",");
 			sb.append(k.get(i));
 		}
-		sb.append("]");
+		sb.append("] "+leaf);
 		return sb.toString();
 	}
 
-	public boolean isFull() {
-		return p.size() == p.capacity();
+	public void setParent(Node parent) {
+		this.parent = parent;
 	}
 
 	
