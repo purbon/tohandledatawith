@@ -25,6 +25,7 @@ public class BPlusTreeTest {
 	@After
 	public void tearDown() throws Exception {
 	}
+	
 
 	@Test
 	public void testInsertOneBucket() {
@@ -40,7 +41,7 @@ public class BPlusTreeTest {
 	public void testSearch() {
 		Node n  = t.search(7);
 		assertEquals(true, n.isLeaf());
-		assertEquals((Integer)7, n.keys().get(0));
+		assertEquals((Integer)7,  n.keys().get(0));
 		assertEquals((Integer)10, n.keys().get(1));
 	}
 	
@@ -82,7 +83,21 @@ public class BPlusTreeTest {
 		t.insert(25, "d8");
 		t.insert(19, "d9");
 		t.insert(20, "d10");
-		Node root = t.getRootNode();
-		assertEquals(1, root.size());
+		assertEquals((Integer)20, t.getRootNode().keys().get(0));
+	}
+
+	@Test
+	public void testFourBucketSecondLevelSearch() {
+		t.insert(17, "d5");
+		t.insert(21, "d6");
+		t.insert(31, "d7");
+		t.insert(25, "d8");
+		t.insert(19, "d9");
+		t.insert(20, "d10");
+		int[]  pk   = new int[]{2,2};
+		for(int i=0; i < pk.length; i++) {
+			assertEquals((Integer)pk[i], (Integer)((Node)t.getRootNode().pointers().get(i)).size());
+		}
+
 	}
 }

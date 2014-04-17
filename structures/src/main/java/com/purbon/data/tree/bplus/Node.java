@@ -56,4 +56,22 @@ public class Node {
 		return pos;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		for(int i=0; i < k.size(); i++) {
+			if (i>0)
+				sb.append(",");
+			sb.append(k.get(i));
+		}
+		sb.append("]");
+		return sb.toString();
+	}
+
+	public boolean isFull() {
+		return p.size() == p.capacity();
+	}
+
+	
 }
