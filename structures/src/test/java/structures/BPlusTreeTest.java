@@ -59,4 +59,30 @@ public class BPlusTreeTest {
 		Node node = t.search(10);
 		assertEquals((Integer)10, node.keys().get(1));
 	}
+	
+	@Test
+	public void testThirdBucketSearch() {
+		t.insert(17, "d5");
+		t.insert(21, "d6");
+		t.insert(31, "d7");
+		t.insert(25, "d8");
+		Node root = t.getRootNode();
+		assertEquals(3, root.size());
+		int[]  pk   = new int[]{7,17,25};
+		for(int i=0; i < pk.length; i++) {
+			assertEquals((Integer)pk[i], root.keys().get(i));
+		}
+	}
+	
+	@Test
+	public void testFourBucketSearch() {
+		t.insert(17, "d5");
+		t.insert(21, "d6");
+		t.insert(31, "d7");
+		t.insert(25, "d8");
+		t.insert(19, "d9");
+		t.insert(20, "d10");
+		Node root = t.getRootNode();
+		assertEquals(1, root.size());
+	}
 }
