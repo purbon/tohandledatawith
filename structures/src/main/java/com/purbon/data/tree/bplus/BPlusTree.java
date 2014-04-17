@@ -95,6 +95,7 @@ public class BPlusTree {
 				r.k.remove(0);
 				n.p.add(r.p.get(0));
 				r.p.remove(0);
+				r.leaf = false;
 			}
 			root.p.add(n);
 			root.p.add(r);

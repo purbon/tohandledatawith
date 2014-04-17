@@ -9,7 +9,7 @@ import org.junit.Test;
 import com.purbon.data.tree.bplus.BPlusTree;
 import com.purbon.data.tree.bplus.Node;
 
-public class BPlusTreeInsertAndSearchTest {
+public class BPlusTreeBuildAndSearchTest {
 
 	BPlusTree t;
 	

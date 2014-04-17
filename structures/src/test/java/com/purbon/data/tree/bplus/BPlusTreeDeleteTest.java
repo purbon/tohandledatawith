@@ -7,17 +7,17 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.purbon.data.tree.bplus.BPlusTree;
-import com.purbon.data.tree.bplus.Node;
-
 public class BPlusTreeDeleteTest {
-
+	
 	BPlusTree t;
 	@Before
 	public void setUp() throws Exception {
 		t = new BPlusTree(4);
 		t.setRoot(buildTree());
 		t.setDeep(2);
+		t.insert(28, "d28");
+		t.insert(70, "d70");
+		t.insert(95, "d95");
 	}
 
 	@After
@@ -25,44 +25,18 @@ public class BPlusTreeDeleteTest {
 	}
 
 	@Test
-	public final void testSimpleInsert() {
-		t.insert(28, "d28");
-		Node r = t.getRootNode();
-		int [] da = new int[]{25,28,30};
-		Node secondChild = ((Node)r.pointers().get(1));
-		for(int i=0; i < secondChild.keys().size(); i++)
-		assertEquals((Integer)da[i], secondChild.keys().get(i));
-	}
-
-	@Test
-	public final void testSplitInsert() {
-		t.insert(28, "d28");
-		t.insert(70, "d70");
-		Node r = t.getRootNode();
-		assertEquals((Integer)5,(Integer)r.pointers().size());
-		Assert.assertArrayEquals(new Object[]{5,10,15,20},((Node)r.pointers().get(0)).keys().toArray());
-		Assert.assertArrayEquals(new Object[]{25,28,30},  ((Node)r.pointers().get(1)).keys().toArray());
-		Assert.assertArrayEquals(new Object[]{50,55},     ((Node)r.pointers().get(2)).keys().toArray());
-		Assert.assertArrayEquals(new Object[]{60,65, 70}, ((Node)r.pointers().get(3)).keys().toArray());
-	}
-	
-	@Test
-	public final void testSplitMoreInsert() {
-		t.insert(28, "d28");
-		t.insert(70, "d70");
-		t.insert(95, "d95");
+	public final void testDeleteFromBucket() {
+		t.delete(70);
 		Node r = t.getRootNode();
 		assertEquals((Integer)2,(Integer)r.pointers().size());
-		Assert.assertArrayEquals(new Object[]{25,50}, ((Node)r.pointers().get(0)).keys().toArray());
-		Assert.assertArrayEquals(new Object[]{75,85}, ((Node)r.pointers().get(1)).keys().toArray());
-		Node child = ((Node)r.pointers().get(0));
+		Node child = ((Node)r.pointers().get(1));
 		assertEquals((Integer)3,(Integer)child.pointers().size());
-		Assert.assertArrayEquals(new Object[]{5,10,15,20}, ((Node)child.pointers().get(0)).keys().toArray());
-		Assert.assertArrayEquals(new Object[]{25,28,30},   ((Node)child.pointers().get(1)).keys().toArray());
-		Assert.assertArrayEquals(new Object[]{50,55},      ((Node)child.pointers().get(2)).keys().toArray());
-
+		Assert.assertArrayEquals(new Object[]{60,65},   ((Node)child.pointers().get(0)).keys().toArray());
+		Assert.assertArrayEquals(new Object[]{75,80},   ((Node)child.pointers().get(1)).keys().toArray());
+		Assert.assertArrayEquals(new Object[]{85,90,95},((Node)child.pointers().get(2)).keys().toArray());
 
 	}
+
 	
 	private Node buildTree() {
 		Node n = new Node(4, false);
