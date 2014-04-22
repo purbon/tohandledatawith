@@ -10,6 +10,7 @@ public class Node {
 	
 	Node parent;
 	Node sibling;
+	Node previous;
 	
 	int n;
 	boolean leaf;

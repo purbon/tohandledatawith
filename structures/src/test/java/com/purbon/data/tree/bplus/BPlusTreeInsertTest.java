@@ -58,12 +58,14 @@ public class BPlusTreeInsertTest {
 		Node child = ((Node)r.pointers().get(0));
 		assertEquals((Integer)3,(Integer)child.pointers().size());
 		assertEquals(false, child.isLeaf());
+		assertEquals(child,((Node)child.pointers().get(0)).parent);
 		Assert.assertArrayEquals(new Object[]{5,10,15,20}, ((Node)child.pointers().get(0)).keys().toArray());
 		Assert.assertArrayEquals(new Object[]{25,28,30},   ((Node)child.pointers().get(1)).keys().toArray());
 		Assert.assertArrayEquals(new Object[]{50,55},      ((Node)child.pointers().get(2)).keys().toArray());
 		child = ((Node)r.pointers().get(1));
 		assertEquals((Integer)3,(Integer)child.pointers().size());
 		assertEquals(false, child.isLeaf());
+		assertEquals(child,((Node)child.pointers().get(0)).parent);
 		Assert.assertArrayEquals(new Object[]{60,65,70}, ((Node)child.pointers().get(0)).keys().toArray());
 		Assert.assertArrayEquals(new Object[]{75,80},   ((Node)child.pointers().get(1)).keys().toArray());
 		Assert.assertArrayEquals(new Object[]{85,90,95},      ((Node)child.pointers().get(2)).keys().toArray());

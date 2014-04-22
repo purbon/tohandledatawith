@@ -29,14 +29,50 @@ public class BPlusTreeDeleteTest {
 		t.delete(70);
 		Node r = t.getRootNode();
 		assertEquals((Integer)2,(Integer)r.pointers().size());
-		Node child = ((Node)r.pointers().get(1));
+		
+		Assert.assertArrayEquals(new Object[]{25,50}, ((Node)r.pointers().get(0)).keys().toArray());
+		Assert.assertArrayEquals(new Object[]{75,85}, ((Node)r.pointers().get(1)).keys().toArray());
+		Node child = ((Node)r.pointers().get(0));
 		assertEquals((Integer)3,(Integer)child.pointers().size());
-		Assert.assertArrayEquals(new Object[]{60,65},   ((Node)child.pointers().get(0)).keys().toArray());
+		assertEquals(false, child.isLeaf());
+		Assert.assertArrayEquals(new Object[]{5,10,15,20}, ((Node)child.pointers().get(0)).keys().toArray());
+		Assert.assertArrayEquals(new Object[]{25,28,30},   ((Node)child.pointers().get(1)).keys().toArray());
+		Assert.assertArrayEquals(new Object[]{50,55},      ((Node)child.pointers().get(2)).keys().toArray());
+		child = ((Node)r.pointers().get(1));
+		assertEquals((Integer)3,(Integer)child.pointers().size());
+		assertEquals(false, child.isLeaf());
+		Assert.assertArrayEquals(new Object[]{60,65}, ((Node)child.pointers().get(0)).keys().toArray());
 		Assert.assertArrayEquals(new Object[]{75,80},   ((Node)child.pointers().get(1)).keys().toArray());
-		Assert.assertArrayEquals(new Object[]{85,90,95},((Node)child.pointers().get(2)).keys().toArray());
-
+		Assert.assertArrayEquals(new Object[]{85,90,95},      ((Node)child.pointers().get(2)).keys().toArray());
 	}
 
+	@Test
+	public final void testDeleteWithRelocation() {
+		t.delete(25);
+		Node r = t.getRootNode();
+		assertEquals((Integer)2,(Integer)r.pointers().size());
+		Assert.assertArrayEquals(new Object[]{28,50}, ((Node)r.pointers().get(0)).keys().toArray());
+		Node child = ((Node)r.pointers().get(0));
+		assertEquals((Integer)3,(Integer)child.pointers().size());
+		Assert.assertArrayEquals(new Object[]{5,10,15,20},((Node)child.pointers().get(0)).keys().toArray());
+		Assert.assertArrayEquals(new Object[]{28,30},     ((Node)child.pointers().get(1)).keys().toArray());
+	}
+	
+	@Test
+	public final void testDeleteWithLessElements() {
+		t.delete(70);
+		t.delete(60);
+		Node r = t.getRootNode();
+		Assert.assertArrayEquals(new Object[]{28,50,75,85}, r.keys().toArray());
+		assertEquals((Integer)5,(Integer)r.pointers().size());
+		Assert.assertArrayEquals(new Object[]{5,10,15,20}, ((Node)r.pointers().get(0)).keys().toArray());
+		Assert.assertArrayEquals(new Object[]{28,30}, ((Node)r.pointers().get(1)).keys().toArray());
+		Assert.assertArrayEquals(new Object[]{50,55,65}, ((Node)r.pointers().get(2)).keys().toArray());
+		Assert.assertArrayEquals(new Object[]{75,80}, ((Node)r.pointers().get(3)).keys().toArray());
+		Assert.assertArrayEquals(new Object[]{85,90,95}, ((Node)r.pointers().get(4)).keys().toArray());
+
+		
+	}
 	
 	private Node buildTree() {
 		Node n = new Node(4, false);

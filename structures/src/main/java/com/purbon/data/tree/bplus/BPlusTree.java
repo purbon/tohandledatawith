@@ -64,8 +64,26 @@ public class BPlusTree {
 	public void delete(int key) {
 		Node n = search(key);
 		n.remove(key);
+
+		if (n.parent.k.get(0).compareTo(n.k.get(0)) < 0)
+			n.parent.k.set(0, n.k.get(0));
+
 		if (n.size() < n.capacity()/2) { // data should be redistributed
-			
+			n.previous.k.add(n.k.get(0));
+			n.previous.p.add(n.p.get(0));
+			n.parent.p.remove(0);
+			deleteAndMergeWhenNecessary(key, n.parent);
+		}
+	}
+
+	private void deleteAndMergeWhenNecessary(int key, Node n) {
+		if (!n.k.contains(key)) {
+			deleteAndMergeWhenNecessary(key, n.parent);
+		} else {
+			n.k.remove(key);
+			if (n.k.size() == 0) { // we've to merge childers and create a new node. 
+				
+			}
 		}
 	}
 
@@ -85,6 +103,7 @@ public class BPlusTree {
 		n.add(key, value);
 		if (n.size() <= n.capacity())
 			return;
+
 		int  s = (int)Math.ceil(n.capacity()/2.0);
 		Node r = split(n, s);
 		if (n.parent == null) {
@@ -96,6 +115,9 @@ public class BPlusTree {
 				n.p.add(r.p.get(0));
 				r.p.remove(0);
 				r.leaf = false;
+				for(int i=0; i < r.p.size(); i++) {
+					((Node)r.p.get(i)).parent = r;
+				}
 			}
 			root.p.add(n);
 			root.p.add(r);
@@ -111,6 +133,7 @@ public class BPlusTree {
 	protected void setDeep(int deep) {
 		this.deep = deep;
 	}
+	
 	private Node split(Node n, int s) {
 		Node r = new Node(n.capacity());
 		for(int i=s; i < n.k.size(); i++) {
@@ -125,8 +148,11 @@ public class BPlusTree {
 		for(int i=n.p.size()-1; i >= s; i--) {
 			n.p.remove(i);
 		}
-		r.parent = n.parent;
+		
 		n.sibling = r;
+		r.previous = n;
+		r.parent = n.parent;
+		
 		return r;
 	}
 }
