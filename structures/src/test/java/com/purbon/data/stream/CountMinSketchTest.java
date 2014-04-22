@@ -57,7 +57,6 @@ public class CountMinSketchTest {
 			}
 		}
 		double pOk = 1 - (1.0*nErr)/nScale;
-		System.out.println("nError: "+nErr+" pOk: "+pOk);
 		assertTrue("Confidence not reached: required " + sketch.getConfidence() + ", reached " + pOk, pOk > sketch.getConfidence());
 	}
 
