@@ -1,4 +1,4 @@
-package com.purbon.data.stream;
+package com.purbon.data.stream.count;
 
 /**
  * Count min sketch
