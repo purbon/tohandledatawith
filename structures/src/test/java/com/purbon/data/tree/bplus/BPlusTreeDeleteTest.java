@@ -58,7 +58,7 @@ public class BPlusTreeDeleteTest {
 		Assert.assertArrayEquals(new Object[]{28,30},     ((Node)child.pointers().get(1)).keys().toArray());
 	}
 	
-	@Test
+	
 	public final void testDeleteWithLessElements() {
 		t.delete(70);
 		t.delete(60);
