@@ -65,27 +65,68 @@ public class BPlusTree {
 		Node n = search(key);
 		n.remove(key);
 
-		if (n.parent.k.get(0).compareTo(n.k.get(0)) < 0)
-			n.parent.k.set(0, n.k.get(0));
-
 		if (n.size() < n.capacity()/2) { // data should be redistributed
-			n.previous.k.add(n.k.get(0));
-			n.previous.p.add(n.p.get(0));
-			n.parent.p.remove(0);
-			deleteAndMergeWhenNecessary(key, n.parent);
+			
+			int diff = (n.capacity()/2)-n.size();
+			int siblingOverflow = n.sibling.size()-(n.sibling.capacity()/2);
+			if (siblingOverflow >= diff) {
+				for(int i=0; i < diff; i++) {
+					n.keys().add(n.sibling.keys().remove(0));
+					n.pointers().add(n.sibling.pointers().remove(0));
+				}
+			} else if (siblingOverflow == 0) {
+				for(int i=0; i < diff; i++) {
+					n.sibling.keys().add(0, n.keys().remove(0));
+					n.sibling.pointers().add(0, n.pointers().remove(0));
+				}
+				n.parent.pointers().remove(n);
+			}
+		
 		}
+		rebalanceNode(n.parent); 		// reorder parent
 	}
 
-	private void deleteAndMergeWhenNecessary(int key, Node n) {
-		if (!n.k.contains(key)) {
-			deleteAndMergeWhenNecessary(key, n.parent);
-		} else {
-			n.k.remove(key);
-			if (n.k.size() == 0) { // we've to merge childers and create a new node. 
-				
+	private void rebalanceNode(Node node) {
+		if (node.keys().size() >= node.pointers().size()) {				
+			Node lastPrevNode = (Node)node.previous.pointers().remove(node.previous.pointers().size()-1);
+			lastPrevNode.parent = node;
+			node.pointers().add(0, lastPrevNode);
+			node.keys().add(0, node.previous.keys().remove(node.previous.keys().size()-1));
+		}
+		if (node.keys().size() >= node.pointers().size())
+			node.keys().remove(node.keys().size()-1);
+
+		if (node.parent != null)
+			rebalanceKeys(node.parent);
+		rebalanceLeaf(node);
+	
+	}
+	
+	public void rebalanceKeys(Node node) {
+		for(int i=0; i < node.size(); i++) {
+			int  parentKey  = node.keys().get(i);
+				Node rightChild = (Node)node.pointers().get(i+1);
+				if (rightChild.keys().get(0) < parentKey) {
+					int key = rightChild.keys().get(0);
+					rightChild.keys().set(0, parentKey);
+					node.keys().set(i, key);
+				}
+		}
+	}
+	
+	
+	private void rebalanceLeaf(Node node) {
+		for(int i=0; i < node.size(); i++) {
+			int  parentKey  = node.keys().get(i);
+			if ( (i+1) < node.pointers().size() ) {
+				Node rightChild = (Node)node.pointers().get(i+1);
+				if (rightChild.keys().get(0) > parentKey) {
+					node.keys().set(i, rightChild.keys().get(0));
+				}
 			}
 		}
 	}
+	
 
 	/**
 	 * Get's the root tree node.
@@ -119,6 +160,8 @@ public class BPlusTree {
 					((Node)r.p.get(i)).parent = r;
 				}
 			}
+			n.sibling  = r;
+			r.previous = n;
 			root.p.add(n);
 			root.p.add(r);
 			r.parent = root;
